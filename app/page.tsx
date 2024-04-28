@@ -104,6 +104,7 @@ export default  function  Page()
       try{
         console.log(engid);
       const endpoint =  (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
+
       console.log(endpoint);
       const response = await fetch(endpoint);
       const data = await response.json();
