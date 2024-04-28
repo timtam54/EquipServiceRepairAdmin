@@ -2,7 +2,10 @@
   "name": "equipservicerepairadmin",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+  "engines": {
+    "node": "18.17.1"
+  },
+    "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
