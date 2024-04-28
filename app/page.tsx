@@ -3,15 +3,18 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
+import "./index.css"
 import startOfWeek from 'date-fns/startOfWeek'
 import getDay from 'date-fns/getDay'
 import enUS from 'date-fns/locale/en-AU'
+import Image from "next/image";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { ChangeEvent, useState  }  from 'react';
 import Link from 'next/link'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import moment from 'moment'
 const locales = {
-  'en-US': enUS,
+  'en-AU': enUS,
 }
 
 const localizer = dateFnsLocalizer({
@@ -80,7 +83,7 @@ export default  function  Page()
 
     const fetchEngineer = async()=>{
     
-      const endpoint = (api)?'https://mdsapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?EngineerID='+EngID: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
+      const endpoint = (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?EngineerID='+EngID: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
       const response = await fetch(endpoint);
       console.log(endpoint);
       const data = await response.json();
@@ -100,7 +103,7 @@ export default  function  Page()
     const fetchTechScheduler = async(engid:string)=>{
       try{
         console.log(engid);
-      const endpoint =  (api)?'https://mdsapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
+      const endpoint =  (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
       console.log(endpoint);
       const response = await fetch(endpoint);
       const data = await response.json();
@@ -142,17 +145,10 @@ export default  function  Page()
         }
     };
 
-   
 
-    return (
-      <>
-      <div className="bg-white p-2 text-red text-3xl header" >
-        <img style={{height:"83px",width:"217px"}}
-              src="/logo.png"/>              
-                <div>
-                   <Link href="/"><ArrowBackIcon/></Link>
-                   </div>
-<div>
+
+   /*
+   <div>
 <select  onChange={engChange}>
       <option key='0' value='0'>All</option>
         {engineers.map((eng, index) => {
@@ -165,18 +161,26 @@ export default  function  Page()
     })}
         </select>
   </div>
-             <h1><b>Technician Diary</b></h1>
-        </div>
+  */
+/*
+  <Image alt="Tech Interface - Equipment Service Repair" layout="fill" objectFit="cover" src="/white.jpg"/>
+      */
+
+    return (
+      <>
+        
         <div className="App">
       
       <Calendar
-       style={{ height: 500 }}
+       style={{ height: '100%' }}
         defaultView='week'
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
-        views={['week','agenda']}
+        views={['week']}
         localizer={localizer}
         events={events}
+        min={moment("2024-10-10T07:00:00").toDate()}
+        max={moment("2024-10-10T18:00:00").toDate()}
         resources={resourceMap}
         startAccessor="start"
         endAccessor="end"
