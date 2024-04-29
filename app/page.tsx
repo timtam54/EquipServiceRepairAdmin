@@ -200,7 +200,7 @@ const updateDate = (dte:Date)=>{
           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
          // const navigate = useNavigate();
           //navigate(link, { replace: false });
-          //window.location.replace(link);
+          window.parent.location.replace(link);
           window.parent.location.href=link;
       }}  
        style={{ height: '100%' }}
