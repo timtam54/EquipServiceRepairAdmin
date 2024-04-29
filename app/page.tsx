@@ -185,7 +185,7 @@ const updateDate = (dte:Date)=>{
       <>
         
         <div className="App">
-      
+      <a href="https://dentalinstallations.azurewebsites.net/Repair/Edit/100" target='_parent'>test</a>
       <Calendar
       selectable={true}
       onSelectSlot={(slot) => {
@@ -200,7 +200,8 @@ const updateDate = (dte:Date)=>{
           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
          // const navigate = useNavigate();
           //navigate(link, { replace: false });
-          window.location.replace(link);
+          //window.location.replace(link);
+          window.parent.location.href=link;
       }}  
        style={{ height: '100%' }}
         defaultView='week'
