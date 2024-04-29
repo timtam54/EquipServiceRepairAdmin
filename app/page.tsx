@@ -1,20 +1,21 @@
 'use client'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar'
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
-import "./index.css"
+
 import startOfWeek from 'date-fns/startOfWeek'
 import getDay from 'date-fns/getDay'
 import enUS from 'date-fns/locale/en-AU'
 import Image from "next/image";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import React, { ChangeEvent, useState  }  from 'react';
+import React, { ChangeEvent, useCallback, useState  }  from 'react';
 import Link from 'next/link'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import moment from 'moment'
+import "./index.css"
 const locales = {
-  'en-AU': enUS,
+  'en-US': enUS,
 }
 
 const localizer = dateFnsLocalizer({
@@ -71,7 +72,7 @@ export default  function  Page()
   const [resourceMap,setResourceMap] = useState<ResourceRow[]>([]);
   const [engineers,setEngineers] = useState<ResourceRow[]>([]);
   const [engineerID,setEngineerID] = useState(EngID);
-  
+  const [date,setDate]=useState(new Date());
   const [events,setEvents] = useState<eventObject[]>([]);//repairList
   
 
@@ -83,6 +84,7 @@ export default  function  Page()
 
     const fetchEngineer = async()=>{
     
+
       const endpoint = (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?EngineerID='+EngID: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
       const response = await fetch(endpoint);
       console.log(endpoint);
@@ -98,12 +100,12 @@ export default  function  Page()
         {
           setResourceMap(result.filter((e:ResourceRow) => e.resourceid==EngID));
         }
-      fetchTechScheduler(EngID.toString());
+      fetchTechScheduler(EngID.toString(),date);
    }
-    const fetchTechScheduler = async(engid:string)=>{
+    const fetchTechScheduler = async(engid:string,dte:Date)=>{
       try{
         console.log(engid);
-      const endpoint =  (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
+      const endpoint =  (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}/'+dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString() +'-'+dte.getDate().toString()+'?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
 
       console.log(endpoint);
       const response = await fetch(endpoint);
@@ -122,20 +124,18 @@ export default  function  Page()
 
       console.table(myevent);
       setEvents(myevent);
-      
       }
       catch (error)
       {
         console.error('Error: '+error)
       }
-      
     }
 
     const engChange = (event: ChangeEvent<HTMLSelectElement>) => { // <----- here we assign event to ChangeEvent
       
       console.log(event.target.value); // Example: Log the value of the selected option
       setEngineerID(event.target.value);
-      fetchTechScheduler(event.target.value);
+      fetchTechScheduler(event.target.value,date);
       if (event.target.value=="0")
         {
           setResourceMap(engineers);
@@ -167,25 +167,60 @@ export default  function  Page()
   <Image alt="Tech Interface - Equipment Service Repair" layout="fill" objectFit="cover" src="/white.jpg"/>
       */
 
+
+
+const updateDate = (dte:Date)=>{
+
+  setDate(dte);
+  console.log(dte);
+  fetchTechScheduler(EngID.toString(),dte);
+}
+//const [view,setView]=useState<Views>(Views.WEEK);
+//const OnNextClick = useCallback(()=>{
+    //if (view==Views.DAY) 
+     ;// setDate(moment(date).add(7,'d').toDate());
+    //setView(Views.DAY);
+//},[])
     return (
       <>
         
         <div className="App">
       
       <Calendar
+      selectable={true}
+      onSelectSlot={(slot) => {
+        console.log("slot select: ", slot);
+        //selectDayMobile(slot);
+      }}
+      onSelectEvent={(eventObject)=>{
+          console.log('hyperlink');
+          console.log(eventObject.id);
+          const ideng= eventObject.id.toString().split("~");
+          console.log(ideng[0]);
+          const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
+         // const navigate = useNavigate();
+          //navigate(link, { replace: false });
+          window.location.replace(link);
+      }}  
        style={{ height: '100%' }}
         defaultView='week'
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
-        views={['week']}
+        views={['week','agenda']}
+       
         localizer={localizer}
         events={events}
         min={moment("2024-10-10T07:00:00").toDate()}
         max={moment("2024-10-10T18:00:00").toDate()}
         resources={resourceMap}
-        startAccessor="start"
-        endAccessor="end"
-     
+
+        date={date}
+
+   
+        onNavigate={dte => {
+          updateDate(dte);
+          
+        }}
           eventPropGetter={(events) => {
             const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
             const color = events.color ? events.color : 'blue';
