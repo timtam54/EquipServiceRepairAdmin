@@ -203,10 +203,10 @@ const updateDate = (dte:Date)=>{
           window.top?.location.replace(link);
       }}  
        style={{ height: '100%' }}
-        defaultView='week'
+        defaultView='day'
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
-        views={['week','agenda']}
+        views={['week','agenda','day']}
        
         localizer={localizer}
         events={events}
