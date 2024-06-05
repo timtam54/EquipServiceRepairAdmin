@@ -7,10 +7,10 @@ import { useSearchParams } from "next/navigation";
 import startOfWeek from 'date-fns/startOfWeek'
 import getDay from 'date-fns/getDay'
 import enUS from 'date-fns/locale/en-AU'
-import Image from "next/image";
+import { Circles } from 'react-loader-spinner'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { ChangeEvent, useCallback, useState  }  from 'react';
-import Link from 'next/link'
+
 
 import moment from 'moment'
 import "./index.css"
@@ -133,6 +133,7 @@ export default  function  Page()
       {
         console.error('Error: '+error)
       }
+      setLoading(false);
     }
 
     const engChange = (event: ChangeEvent<HTMLSelectElement>) => { // <----- here we assign event to ChangeEvent
@@ -179,13 +180,24 @@ const updateDate = (dte:Date)=>{
   console.log(dte);
   fetchTechScheduler(EngID.toString(),dte);
 }
-//const [view,setView]=useState<Views>(Views.WEEK);
-//const OnNextClick = useCallback(()=>{
-    //if (view==Views.DAY) 
-     ;// setDate(moment(date).add(7,'d').toDate());
-    //setView(Views.DAY);
-//},[])
-    return (
+const [loading,setLoading] = useState(true);
+
+return ( loading ? 
+
+  <div className="relative h-16">
+     <div className="absolute p-4 text-center transform -translate-x-1/2 border left-1/2">
+        <Circles
+      height="200"
+      width="200"
+
+      color="navy"
+      ariaLabel="circles-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+      visible={true}
+    />  </div>
+    </div>
+    :
       <>
         
         <div className="App">
