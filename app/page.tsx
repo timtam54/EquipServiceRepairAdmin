@@ -3,7 +3,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar'
 import format from 'date-fns/format'
 import parse from 'date-fns/parse'
-
+import { useSearchParams } from "next/navigation";
 import startOfWeek from 'date-fns/startOfWeek'
 import getDay from 'date-fns/getDay'
 import enUS from 'date-fns/locale/en-AU'
@@ -11,7 +11,7 @@ import Image from "next/image";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { ChangeEvent, useCallback, useState  }  from 'react';
 import Link from 'next/link'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import moment from 'moment'
 import "./index.css"
 const locales = {
@@ -72,7 +72,10 @@ export default  function  Page()
   const [resourceMap,setResourceMap] = useState<ResourceRow[]>([]);
   const [engineers,setEngineers] = useState<ResourceRow[]>([]);
   const [engineerID,setEngineerID] = useState(EngID);
-  const [date,setDate]=useState(new Date());
+  const searchParams = useSearchParams();
+  const spd=searchParams.get("dte");
+  const startdate = (spd==null)?new Date():new Date(spd!.toString());
+  const [date,setDate]=useState(startdate);
   const [events,setEvents] = useState<eventObject[]>([]);//repairList
   
 
@@ -86,8 +89,9 @@ export default  function  Page()
     
 
       const endpoint = (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?EngineerID='+EngID: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
-      const response = await fetch(endpoint);
       console.log(endpoint);
+      const response = await fetch(endpoint);
+    
       const data = await response.json();
       const result = (api)?data:data.value;
       setEngineers(result);
@@ -202,7 +206,7 @@ const updateDate = (dte:Date)=>{
           //window.parent.location.path=link;
           window.top?.location.replace(link);
       }}  
-       style={{ height: '100%' }}
+       style={{ height: '1000px' }}
         defaultView='day'
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
