@@ -10,7 +10,7 @@ import enUS from 'date-fns/locale/en-AU'
 import { Circles } from 'react-loader-spinner'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { ChangeEvent, useCallback, useState  }  from 'react';
-
+import WeekdaysView from "../components/WeekdaysView";
 
 import moment from 'moment'
 import "./index.css"
@@ -202,10 +202,10 @@ return ( loading ?
         
         <div className="App">
        <Calendar
+       
       selectable={true}
       onSelectSlot={(slot) => {
         console.log("slot select: ", slot);
-        //selectDayMobile(slot);
       }}
       onSelectEvent={(eventObject)=>{
           console.log('hyperlink');
@@ -219,15 +219,16 @@ return ( loading ?
           window.top?.location.replace(link);
       }}  
        style={{ height: '1000px' }}
-        defaultView='day'
+   
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
-        views={['week','agenda','day']}
-       
+        messages={{ weekdays: "Weekdays" }}
+        views={{ day: true, week: true, weekdays: WeekdaysView }}
         localizer={localizer}
         events={events}
-        min={moment("2024-10-10T07:00:00").toDate()}
-        max={moment("2024-10-10T18:00:00").toDate()}
+         defaultView="weekdays"
+        min={moment("2024-06-24T07:00:00").toDate()}
+        max={moment("2024-06-28T18:00:00").toDate()}
         resources={resourceMap}
 
         date={date}
@@ -248,4 +249,6 @@ return ( loading ?
     );
 }
 
-
+/*
+views={['week','agenda','day']}
+*/
