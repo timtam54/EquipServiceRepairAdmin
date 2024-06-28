@@ -222,15 +222,17 @@ return ( loading ?
    
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
+       
         messages={{ weekdays: "Weekdays" }}
         views={{ day: true, week: true, weekdays: WeekdaysView }}
+
         localizer={localizer}
         events={events}
-         defaultView="weekdays"
+         defaultView="day"
         min={moment("2024-06-24T07:00:00").toDate()}
         max={moment("2024-06-28T18:00:00").toDate()}
         resources={resourceMap}
-
+ 
         date={date}
 
    
