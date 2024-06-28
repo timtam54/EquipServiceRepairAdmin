@@ -202,7 +202,7 @@ return ( loading ?
            //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '1000px' }}
+        style={{ height: '980px' }}
     
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
@@ -254,7 +254,7 @@ return ( loading ?
            //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '1000px' }}
+        style={{ height: '980px' }}
     
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
@@ -306,7 +306,7 @@ return ( loading ?
            //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '1000px' }}
+        style={{ height: '980px' }}
     
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
@@ -358,7 +358,7 @@ return ( loading ?
            //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '1000px' }}
+        style={{ height: '980px' }}
     
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
@@ -409,7 +409,7 @@ return ( loading ?
            //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '1000px' }}
+        style={{ height: '980px' }}
     
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
