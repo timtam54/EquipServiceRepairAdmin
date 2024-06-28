@@ -441,12 +441,9 @@ return ( loading ?
         <div className="App">
 
      
-        <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
-              <div></div>
-              {Mon.toString()}
-              <div></div>
-          </div>
+        
           <Calendar
+          view="work_week"
           toolbar={false}
       selectable={true}
       onSelectSlot={(slot) => {
@@ -469,8 +466,8 @@ return ( loading ?
         resourceIdAccessor="resourceid"
         resourceTitleAccessor="resourcetitle"
        
-        messages={{ weekdays: "Weekdays" }}
-        views={{ day: true, week: true, weekdays: WeekdaysView }}
+        
+        views={{ day: true, week: true, work_week:true }}
 
         localizer={localizer}
         events={events}
