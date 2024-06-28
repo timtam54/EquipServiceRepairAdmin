@@ -438,7 +438,13 @@ return ( loading ?
            }}
        /></div>
         </div>
-        <div className="App">
+     
+    </>
+    );
+}
+
+/*
+   <div className="App">
 
      
         
@@ -490,10 +496,4 @@ return ( loading ?
           }}
       />
     </div>
-    </>
-    );
-}
-
-/*
-views={['week','agenda','day']}
 */
