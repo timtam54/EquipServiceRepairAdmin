@@ -26,21 +26,7 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-interface eventObject{
-  id:number;
-  title:string;
-  start:Date;
-  end:Date;
-  resourceId:number;
-  colorEvento:string;
-  color:string;
-}
 
-
-interface ResourceRow{
-  resourceid:string;
-  resourcetitle:string;
-}
 /*type eventUser = {
   id: number;
   title: string;
@@ -69,14 +55,14 @@ export default  function  Page()
 {
   const api=true;
   const EngID="0";
-  const [resourceMap,setResourceMap] = useState<ResourceRow[]>([]);
-  const [engineers,setEngineers] = useState<ResourceRow[]>([]);
+  const [resourceMap,setResourceMap] = useState([]);
+  const [engineers,setEngineers] = useState([]);
   const [engineerID,setEngineerID] = useState(EngID);
   const searchParams = useSearchParams();
   const spd=searchParams.get("dte");
-  const startdate = (spd==null)?new Date():new Date(spd!.toString());
+  const startdate = (spd==null)?new Date():new Date(spd.toString());
   const [date,setDate]=useState(startdate);
-  const [events,setEvents] = useState<eventObject[]>([]);//repairList
+  const [events,setEvents] = useState([]);//repairList
   
 
  
@@ -102,11 +88,11 @@ export default  function  Page()
         }
         else
         {
-          setResourceMap(result.filter((e:ResourceRow) => e.resourceid==EngID));
+          setResourceMap(result.filter((e) => e.resourceid==EngID));
         }
       fetchTechScheduler(EngID.toString(),date);
    }
-    const fetchTechScheduler = async(engid:string,dte:Date)=>{
+    const fetchTechScheduler = async(engid,dte)=>{
       try{
         console.log(engid);
       const endpoint =  (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}/'+dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString() +'-'+dte.getDate().toString()+'?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
@@ -120,7 +106,7 @@ export default  function  Page()
           setEvents([]);
           return;
         }
-      let myevent: eventObject[] = [];
+      let myevent = [];
       for(let i=0;i<result.length ;i++)
         {
           myevent.push({color:result[i].color,colorEvento:result[i].colorevento,id:result[i].id,title:result[i].title,start:new Date(result[i].start),end:new Date(result[i].end),resourceId:result[i].resourceid});
@@ -136,7 +122,7 @@ export default  function  Page()
       setLoading(false);
     }
 
-    const engChange = (event: ChangeEvent<HTMLSelectElement>) => { // <----- here we assign event to ChangeEvent
+    const engChange = (event) => { // <----- here we assign event to ChangeEvent
       
       console.log(event.target.value); // Example: Log the value of the selected option
       setEngineerID(event.target.value);
@@ -174,7 +160,7 @@ export default  function  Page()
 
 
 
-const updateDate = (dte:Date)=>{
+const updateDate = (dte)=>{
 
   setDate(dte);
   console.log(dte);
