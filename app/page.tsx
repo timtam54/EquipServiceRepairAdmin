@@ -10,8 +10,8 @@ import enUS from 'date-fns/locale/en-AU'
 import { Circles } from 'react-loader-spinner'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { ChangeEvent, useCallback, useState  }  from 'react';
-import WeekdaysView from "../components/WeekdaysView";
-
+import FastRewindIcon from '@mui/icons-material/FastRewind';
+import FastForwardIcon from '@mui/icons-material/FastForward';
 import moment from 'moment'
 import "./index.css"
 const locales = {
@@ -47,6 +47,7 @@ export default  function  Page()
   const api=true;
   const EngID="0";
   const [resourceMap,setResourceMap] = useState<ResourceRow[]>([]);
+  
   const [engineers,setEngineers] = useState<ResourceRow[]>([]);
   const [engineerID,setEngineerID] = useState(EngID);
   const searchParams = useSearchParams();
@@ -57,18 +58,73 @@ export default  function  Page()
   
   const FormatDate=(date:any)=>  {
     if (date==null) return "";
-   const dte= new Date(date);
+   const dte =new Date(date);
     return dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString().padStart(2, '0')+'-'+(dte.getDate()).toString().padStart(2, '0');
   }
     React.useEffect(()=>{
       fetchEngineer();
       
     },[]);
-    const Mon=moment().weekday( 1 );
-    const Tue=moment().weekday( 2 );
-    const Wed=moment().weekday( 3);
-    const Thu=moment().weekday( 4 );
-    const Fri=moment().weekday( 5 );
+    const [Mon,setMon]=useState(moment().weekday(1).toDate());
+    const [Tue,setTue]=useState(moment().weekday(2).toDate());
+    const [Wed,setWed]=useState(moment().weekday(3).toDate());
+    const [Thu,setThu]=useState(moment().weekday(4).toDate());
+    const [Fri,setFri]=useState(moment().weekday(5).toDate());
+
+    const prev=()=>{
+      var mmon = moment(Mon);
+      mmon.subtract(7,'d');
+      setMon(mmon.toDate());
+      
+      var mtue = moment(Tue);
+      mtue.subtract(7,'d');
+      setTue(mtue.toDate());
+
+      var mwed = moment(Wed);
+      mwed.subtract(7,'d');
+      setWed(mwed.toDate());
+
+      var mthu = moment(Thu);
+      mthu.subtract(7,'d');
+      setThu(mthu.toDate());
+
+      var mfri = moment(Fri);
+      mfri.subtract(7,'d');
+      setFri(mfri.toDate());
+
+      var tt=moment(date);//-7;
+      tt.subtract(7,'d');
+      setDate(tt.toDate());
+     // alert(tt.toDate());
+      fetchTechScheduler(EngID.toString(),tt.toDate());
+    }
+    const next=()=>{
+      var mmon = moment(Mon);
+      mmon.add(7,'d');
+      setMon(mmon.toDate());
+      
+      var mtue = moment(Tue);
+      mtue.add(7,'d');
+      setTue(mtue.toDate());
+
+      var mwed = moment(Wed);
+      mwed.add(7,'d');
+      setWed(mwed.toDate());
+
+      var mthu = moment(Thu);
+      mthu.add(7,'d');
+      setThu(mthu.toDate());
+
+      var mfri = moment(Fri);
+      mfri.add(7,'d');
+      setFri(mfri.toDate());
+
+      var tt=moment(date);//-7;
+      tt.add(7,'d');
+      setDate(tt.toDate());
+
+      fetchTechScheduler(EngID.toString(),tt.toDate());
+    }
     const fetchEngineer = async()=>{
     
       const endpoint = (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?EngineerID='+EngID: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
@@ -80,7 +136,8 @@ export default  function  Page()
       setEngineers(result);
       if (EngID=="0")
         {
-          setResourceMap(result);
+
+          setResourceMap(result.filter((ii:ResourceRow)=>ii.resourcetitle!='Admin / Sales'));
         }
         else
         {
@@ -124,10 +181,12 @@ export default  function  Page()
       fetchTechScheduler(event.target.value,date);
       if (event.target.value=="0")
         {
+        
           setResourceMap(engineers);
         }
         else
         {
+        
           setResourceMap(engineers.filter(e => e.resourceid==event.target.value));
         }
     };
@@ -181,11 +240,13 @@ return ( loading ?
         <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
           <div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
-              <div></div>
-              {FormatDate(Mon)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+              <b>Mon</b>{FormatDate(Mon)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
               <div></div>
           </div>
           <Calendar
+          
           toolbar={false}
           selectable={true}
        onSelectSlot={(slot) => {
@@ -202,7 +263,7 @@ return ( loading ?
            //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '980px' }}
+        style={{  height: '980px' }}
     
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
@@ -216,10 +277,7 @@ return ( loading ?
          min={moment("2024-06-24T07:00:00").toDate()}
          max={moment("2024-06-28T18:00:00").toDate()}
          resources={resourceMap}
-  
          date={Mon.toString()}
- 
-    
          onNavigate={dte => {
            updateDate(dte);
            
@@ -234,7 +292,9 @@ return ( loading ?
           <div>           
              <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div></div>
-              {FormatDate(Tue)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+              <b>Tue</b>{FormatDate(Tue)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
               <div></div>
           </div>
           <Calendar
@@ -249,13 +309,9 @@ return ( loading ?
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
            const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
-          // const navigate = useNavigate();
-           //navigate(link, { replace: false });
-           //window.parent.location.path=link;
            window.top?.location.replace(link);
        }}  
-        style={{ height: '980px' }}
-    
+        style={{ height:'980px'}}
          resourceIdAccessor="resourceid"
          resourceTitleAccessor="resourcetitle"
         
@@ -286,8 +342,10 @@ return ( loading ?
           <div>
           <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div></div>
-              {FormatDate(Wed)}
-              <div></div>
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+             <b>Wed</b>{FormatDate(Wed)}
+             <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
+             <div></div>
           </div>
           <Calendar
           toolbar={false}
@@ -337,8 +395,10 @@ return ( loading ?
        </div>
           <div>            <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div></div>
-              {FormatDate(Thu)}
-              <div></div>
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+              <b>Thu</b>{FormatDate(Thu)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
+           <div></div>
           </div>
           <Calendar
           toolbar={false}
@@ -389,8 +449,12 @@ return ( loading ?
        </div>
           <div>            <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div></div>
-              {FormatDate(Fri)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+              <b>Fri</b>{FormatDate(Fri)}
+              <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
+       
               <div></div>
+
           </div>
           <Calendar
           toolbar={false}

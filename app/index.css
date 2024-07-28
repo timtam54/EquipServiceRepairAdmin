@@ -10,6 +10,12 @@
     background-color: black;
 }
 
+.rbc-time-column {
+    width:50px;
+    
+   
+  }
 .rbc-time-header-cell .rbc-today{
-    background-color: red;
+    background-color: navy;
+
 }
