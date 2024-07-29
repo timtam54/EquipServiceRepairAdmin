@@ -447,7 +447,8 @@ return ( loading ?
            }}
        />
        </div>
-          <div>            <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
+          <div>     
+                 <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div></div>
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
               <b>Fri</b>{FormatDate(Fri)}
@@ -499,8 +500,57 @@ return ( loading ?
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
-           }}
-       /></div>
+           }}/>
+       </div>
+
+       <div>     
+                 <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
+              <div></div>
+              <b style={{color:'orange'}} >Unscheduled</b>
+             
+              <div></div>
+
+          </div>
+          <Calendar
+          toolbar={false}
+       selectable={true}
+       onSelectSlot={(slot) => {
+         console.log("slot select: ", slot);
+       }}
+       onSelectEvent={(eventObject)=>{
+           console.log('hyperlink');
+           console.log(eventObject.id);
+           const ideng= eventObject.id.toString().split("~");
+           console.log(ideng[0]);
+           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
+
+           window.top?.location.replace(link);
+       }}  
+        style={{ height: '980px'}}
+    
+         resourceIdAccessor="resourceid"
+         resourceTitleAccessor="resourcetitle"
+        
+
+         views={{ day: true}}
+ 
+         localizer={localizer}
+         events={events}
+          defaultView="day"
+         min={moment("2024-06-24T07:00:00").toDate()}
+         max={moment("2024-06-28T07:00:00").toDate()}
+
+  
+         date={'2000/1/1'}
+ 
+ 
+           eventPropGetter={(events) => {
+             const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
+             const color = events.color ? events.color : 'blue';
+             return { style: { backgroundColor ,color} }
+           }}/>
+       </div>
+
         </div>
      
     </>
