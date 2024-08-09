@@ -127,7 +127,7 @@ export default  function  Page()
     }
     const fetchEngineer = async()=>{
     
-      const endpoint = (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?EngineerID='+EngID: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
+      const endpoint = 'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?BranchID='+'2';//: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
       console.log(endpoint);
       const response = await fetch(endpoint);
     
@@ -148,7 +148,7 @@ export default  function  Page()
     const fetchTechScheduler = async(engid:string,dte:Date)=>{
       try{
         console.log(engid);
-      const endpoint =  (api)?'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}/'+dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString() +'-'+dte.getDate().toString()+'?EngineerID='+engid:'/data-api/rest/TechScheduler?EngineerID='+engid;
+      const endpoint =  'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}/0/'+dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString() +'-'+dte.getDate().toString()+'?EngineerID='+engid;
 
       console.log(endpoint);
       const response = await fetch(endpoint);
