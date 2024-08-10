@@ -626,7 +626,7 @@ return ( loading ?
         {!grid && 
      
         <div>
-               <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Grid</Button>
+               <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
    
         <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API!}>
       <GoogleMap 
