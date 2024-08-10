@@ -14,6 +14,11 @@ import FastRewindIcon from '@mui/icons-material/FastRewind';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import moment from 'moment'
 import "./index.css"
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import Button from '@mui/material/Button';
+import MapIcon from '@mui/icons-material/Map';
+import GridOnIcon from '@mui/icons-material/GridOn';
+
 const locales = {
   'en-US': enUS,
 }
@@ -26,6 +31,17 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
+interface techsched{
+  id:number;
+  title:string;
+  start:Date;
+  end:Date;
+  resourceid:number;
+  colorevento:string;
+  color:string;
+  lat:number;
+  lon:number;
+}
 interface eventObject{
   id:number;
   title:string;
@@ -41,7 +57,11 @@ interface ResourceRow{
   resourceid:string;
   resourcetitle:string;
 }
-
+interface latlon{
+  lat:number;
+  lng:number;
+  title:string;
+}
 export default  function  Page()
 {
   const api=true;
@@ -52,6 +72,8 @@ export default  function  Page()
   const [engineerID,setEngineerID] = useState(EngID);
   const searchParams = useSearchParams();
   const spd=searchParams.get("dte");
+  const brobj=searchParams.get("branchid")??"0";
+  //const [branchid,setBranchid]=useState(parseInt(brobj));
   const startdate = (spd==null)?new Date():new Date(spd!.toString());
   const [date,setDate]=useState(startdate);
   const [events,setEvents] = useState<eventObject[]>([]);//repairList
@@ -96,7 +118,7 @@ export default  function  Page()
       tt.subtract(7,'d');
       setDate(tt.toDate());
      // alert(tt.toDate());
-      fetchTechScheduler(EngID.toString(),tt.toDate());
+      fetchTechScheduler(EngID.toString(),tt.toDate(),resourceMap);
     }
     const next=()=>{
       var mmon = moment(Mon);
@@ -123,101 +145,152 @@ export default  function  Page()
       tt.add(7,'d');
       setDate(tt.toDate());
 
-      fetchTechScheduler(EngID.toString(),tt.toDate());
+      fetchTechScheduler(EngID.toString(),tt.toDate(),resourceMap);
     }
     const fetchEngineer = async()=>{
     
-      const endpoint = 'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechEngineerForDiary/{id}?BranchID='+'2';//: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
+      const endpoint = process.env.NEXT_PUBLIC_MDSAPI+'TechEngineerForDiary/{id}?BranchID='+brobj;//: '/data-api/rest/TechEngineerForDiary?EngineerID='+EngID;
       console.log(endpoint);
       const response = await fetch(endpoint);
     
       const data = await response.json();
       const result = (api)?data:data.value;
       setEngineers(result);
+
       if (EngID=="0")
         {
-
-          setResourceMap(result.filter((ii:ResourceRow)=>ii.resourcetitle!='Admin / Sales'));
+          const xxx=result.filter((ii:ResourceRow)=>ii.resourcetitle!='Admin / Sales');
+          //setResourceMap(xxx);
+          fetchTechScheduler(EngID.toString(),date,xxx);
         }
         else
         {
-          setResourceMap(result.filter((e:ResourceRow) => e.resourceid==EngID));
+          const xxx=result.filter((e:ResourceRow) => e.resourceid==EngID);
+         // setResourceMap(xxx);
+          fetchTechScheduler(EngID,date,xxx);
         }
-      fetchTechScheduler(EngID.toString(),date);
+     // fetchTechScheduler(EngID.toString(),date);
    }
-    const fetchTechScheduler = async(engid:string,dte:Date)=>{
+
+   var running=false;
+    const fetchTechScheduler = async(engid:string,dte:Date,rm:ResourceRow[])=>{
+      if (running)
+      {
+        return;
+      }
+      running=true;
+      //alert('fetchTechScheduler');
       try{
         console.log(engid);
-      const endpoint =  'https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/TechScheduler/{id}/0/'+dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString() +'-'+dte.getDate().toString()+'?EngineerID='+engid;
+      const endpoint = process.env.NEXT_PUBLIC_MDSAPI+'TechScheduler/{id}/'+brobj+'/'+dte.getFullYear().toString()+'-'+(dte.getMonth()+1).toString() +'-'+dte.getDate().toString()+'?EngineerID='+engid;
 
       console.log(endpoint);
       const response = await fetch(endpoint);
       const data = await response.json();
-      const result = (api)?data:data.value;
+      const result:techsched[] = (api)?data:data.value;
+      SetLocsLatLon(result);
       if (result==null)
         {
           setEvents([]);
           return;
         }
       let myevent = [];
+      var myres:ResourceRow[] = [];
+      
+
       for(let i=0;i<result.length ;i++)
         {
           myevent.push({color:result[i].color,colorEvento:result[i].colorevento,id:result[i].id,title:result[i].title,start:new Date(result[i].start),end:new Date(result[i].end),resourceId:result[i].resourceid});
         }
+        console.table(myevent);
+        setEvents(myevent);
+        console.table(rm);
+        for(let i=0;i<rm.length ;i++)
+        {
+            if (result.filter(j=>j.resourceid==parseInt(rm[i].resourceid)).length==0)
+            {
+              ;//alert(rm[i].resourceid + ' not found in result resourceId');
 
-      console.table(myevent);
-      setEvents(myevent);
+            }
+            else
+            {
+             // alert(rm[i].resourceid + ' IS found in result resourceId');
+              const eng = rm.filter(j=>j.resourceid==rm[i].resourceid);
+              if (eng.length==0)
+              {
+                alert(rm[i].resourceid);
+              }
+              else
+              {
+              const engname = eng[0].resourcetitle;
+              //alert('found'+result[i].resourceid + ' ' + engname);
+              myres.push({resourceid:rm[i].resourceid,resourcetitle:engname});
+              }
+            }   
+        }
+        console.table(myres);
+        setResourceMap(myres);
+/*resourceid:string;
+resourcetitle:string;*/
+    
       }
       catch (error)
       {
         console.error('Error: '+error)
       }
       setLoading(false);
+      running=false;
     }
 
-    const engChange = (event: ChangeEvent<HTMLSelectElement>)=> { // <----- here we assign event to ChangeEvent  
-      console.log(event.target.value); // Example: Log the value of the selected option
-      setEngineerID(event.target.value);
-      fetchTechScheduler(event.target.value,date);
-      if (event.target.value=="0")
-        {
-        
-          setResourceMap(engineers);
-        }
-        else
-        {
-        
-          setResourceMap(engineers.filter(e => e.resourceid==event.target.value));
-        }
-    };
-
-   /*
-   <div>
-<select  onChange={engChange}>
-      <option key='0' value='0'>All</option>
-        {engineers.map((eng, index) => {
-      return (
-        <option key={eng.resourceid} value={eng.resourceid} selected={eng.resourceid==engineerID}>
-          {eng.resourcetitle}
-        </option>
-      );
-      
-    })}
-        </select>
-  </div>
-  */
-/*
-  <Image alt="Tech Interface - Equipment Service Repair" layout="fill" objectFit="cover" src="/white.jpg"/>
-      */
-
-
+    const [center,setCenter] = useState<latlon>();
+        const [locations,setLocations] = useState<latlon[]>([]); 
+        const SetLocsLatLon=(jbs:techsched[])=>
+          {
+            let unique:latlon[] = [];
+            let glocs:latlon[] = [];
+            
+            let sumlat=0;
+            let sumlon=0;
+            let cnt=0;
+            jbs.forEach((element:techsched) => {
+            
+              glocs.push({lat: element.lat, lng:  element.lon,title:element.title})
+  
+                const el:latlon={lat:element.lat,lng:element.lon,title:element.title };
+  
+                  if (unique.filter(i=>i.title==element.title).length==0)
+                  {
+  
+                    unique.push(el);
+                    if (el.lat!=null && el.lng!=null)
+                      {
+                    sumlat+=el.lat;
+                    console.log(el.lat);
+                    sumlon+=el.lng;
+             
+                    cnt+=1;
+                      }
+                  }     
+            });
+            setLocations(glocs);
+            const lati=sumlat/cnt;
+            console.log('avg lat:'+lati.toString());
+            const loni=sumlon/cnt;
+            console.log('avg lon:'+loni.toString());
+            setCenter({lat:lati,lng:loni,title:'center'});
+          }
+          const containerStyle = {
+            width: '100%',
+            height: '600px'
+          };
 
   const updateDate = (dte:Date)=>{
 
   setDate(dte);
   console.log(dte);
-  fetchTechScheduler(EngID.toString(),dte);
+  fetchTechScheduler(EngID.toString(),dte,resourceMap);
 }
+const [grid,setGrid]=useState(true);
 const [loading,setLoading] = useState(true);
 
 return ( loading ? 
@@ -237,10 +310,11 @@ return ( loading ?
     </div>
     :
       <>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
+        {grid && <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
           <div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+              <Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>
               <b>Mon</b>{FormatDate(Mon)}
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
               <div></div>
@@ -249,18 +323,16 @@ return ( loading ?
           
           toolbar={false}
           selectable={true}
-       onSelectSlot={(slot) => {
+       onSelectSlot={(slot:any) => {
          console.log("slot select: ", slot);
        }}
-       onSelectEvent={(eventObject)=>{
+       onSelectEvent={(eventObject:any)=>{
            console.log('hyperlink');
            console.log(eventObject.id);
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
-           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
-          // const navigate = useNavigate();
-           //navigate(link, { replace: false });
-           //window.parent.location.path=link;
+           const link = process.env.NEXT_PUBLIC_WEB+ "Service/Edit/"+ideng[0].toString()+"?BranchID="+brobj;
+
            window.top?.location.replace(link);
        }}  
         style={{  height: '980px' }}
@@ -278,11 +350,11 @@ return ( loading ?
          max={moment("2024-06-28T18:00:00").toDate()}
          resources={resourceMap}
          date={Mon.toString()}
-         onNavigate={dte => {
+         onNavigate={(dte:any) => {
            updateDate(dte);
            
          }}
-           eventPropGetter={(events) => {
+           eventPropGetter={(events:any) => {
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
@@ -300,15 +372,15 @@ return ( loading ?
           <Calendar
           toolbar={false}
           selectable={true}
-       onSelectSlot={(slot) => {
+       onSelectSlot={(slot:any) => {
          console.log("slot select: ", slot);
        }}
-       onSelectEvent={(eventObject)=>{
+       onSelectEvent={(eventObject:any)=>{
            console.log('hyperlink');
            console.log(eventObject.id);
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
-           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
+           const link = process.env.NEXT_PUBLIC_WEB+ "Service/Edit/"+ideng[0].toString()+"?BranchID="+brobj;
            window.top?.location.replace(link);
        }}  
         style={{ height:'980px'}}
@@ -328,11 +400,11 @@ return ( loading ?
          date={Tue.toString()}
  
     
-         onNavigate={dte => {
+         onNavigate={(dte:any) => {
            updateDate(dte);
            
          }}
-           eventPropGetter={(events) => {
+           eventPropGetter={(events:any) => {
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
@@ -350,15 +422,15 @@ return ( loading ?
           <Calendar
           toolbar={false}
        selectable={true}
-       onSelectSlot={(slot) => {
+       onSelectSlot={(slot:any) => {
          console.log("slot select: ", slot);
        }}
-       onSelectEvent={(eventObject)=>{
+       onSelectEvent={(eventObject:any)=>{
            console.log('hyperlink');
            console.log(eventObject.id);
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
-           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
+           const link = process.env.NEXT_PUBLIC_WEB+ "Service/Edit/"+ideng[0].toString()+"?BranchID="+brobj;
           // const navigate = useNavigate();
            //navigate(link, { replace: false });
            //window.parent.location.path=link;
@@ -382,11 +454,11 @@ return ( loading ?
          date={Wed.toString()}
  
     
-         onNavigate={dte => {
+         onNavigate={(dte:any) => {
            updateDate(dte);
            
          }}
-           eventPropGetter={(events) => {
+           eventPropGetter={(events:any) => {
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
@@ -404,15 +476,15 @@ return ( loading ?
           toolbar={false}
        
        selectable={true}
-       onSelectSlot={(slot) => {
+       onSelectSlot={(slot:any) => {
          console.log("slot select: ", slot);
        }}
-       onSelectEvent={(eventObject)=>{
+       onSelectEvent={(eventObject:any)=>{
            console.log('hyperlink');
            console.log(eventObject.id);
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
-           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
+           const link = process.env.NEXT_PUBLIC_WEB+ "Service/Edit/"+ideng[0].toString()+"?BranchID="+brobj;
           // const navigate = useNavigate();
            //navigate(link, { replace: false });
            //window.parent.location.path=link;
@@ -436,11 +508,11 @@ return ( loading ?
          date={Thu.toString()}
  
     
-         onNavigate={dte => {
+         onNavigate={(dte:any) => {
            updateDate(dte);
            
          }}
-           eventPropGetter={(events) => {
+           eventPropGetter={(events:any) => {
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
@@ -460,15 +532,15 @@ return ( loading ?
           <Calendar
           toolbar={false}
        selectable={true}
-       onSelectSlot={(slot) => {
+       onSelectSlot={(slot:any) => {
          console.log("slot select: ", slot);
        }}
-       onSelectEvent={(eventObject)=>{
+       onSelectEvent={(eventObject:any)=>{
            console.log('hyperlink');
            console.log(eventObject.id);
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
-           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
+           const link = process.env.NEXT_PUBLIC_WEB+ "Service/Edit/"+ideng[0].toString()+"?BranchID="+brobj;
           // const navigate = useNavigate();
            //navigate(link, { replace: false });
            //window.parent.location.path=link;
@@ -492,11 +564,11 @@ return ( loading ?
          date={Fri.toString()}
  
     
-         onNavigate={dte => {
+         onNavigate={(dte:any) => {
            updateDate(dte);
            
          }}
-           eventPropGetter={(events) => {
+           eventPropGetter={(events:any) => {
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
@@ -514,16 +586,15 @@ return ( loading ?
           <Calendar
           toolbar={false}
        selectable={true}
-       onSelectSlot={(slot) => {
+       onSelectSlot={(slot:any) => {
          console.log("slot select: ", slot);
        }}
-       onSelectEvent={(eventObject)=>{
+       onSelectEvent={(eventObject:any)=>{
            console.log('hyperlink');
            console.log(eventObject.id);
            const ideng= eventObject.id.toString().split("~");
            console.log(ideng[0]);
-           const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
-
+           const link = process.env.NEXT_PUBLIC_WEB+ "Service/Edit/"+ideng[0].toString()+"?BranchID=" + brobj;
            window.top?.location.replace(link);
        }}  
         style={{ height: '980px'}}
@@ -544,70 +615,32 @@ return ( loading ?
          date={'2000/1/1'}
  
  
-           eventPropGetter={(events) => {
+           eventPropGetter={(events:any) => {
              const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
              const color = events.color ? events.color : 'blue';
              return { style: { backgroundColor ,color} }
            }}/>
        </div>
 
-        </div>
+        </div>}
+        {!grid && 
      
+        <div>
+               <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Grid</Button>
+   
+        <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAP_API!}>
+      <GoogleMap 
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={8}>
+ {locations.map((location, index) => (
+          <Marker key={index} title={location.title} position={location} clickable={true} draggable={true}  />
+        ))}
+      </GoogleMap>
+    </LoadScript>
+    </div>
+  }
     </>
     );
 }
 
-/*
-   <div className="App">
-
-     
-        
-          <Calendar
-          view="work_week"
-          toolbar={false}
-      selectable={true}
-      onSelectSlot={(slot) => {
-        console.log("slot select: ", slot);
-      }}
-      onSelectEvent={(eventObject)=>{
-          console.log('hyperlink');
-          console.log(eventObject.id);
-          const ideng= eventObject.id.toString().split("~");
-          console.log(ideng[0]);
-          
-          const link = "https://dentalinstallations.azurewebsites.net/Service/Edit/"+ideng[0].toString()+"?BranchID=2";
-         // const navigate = useNavigate();
-          //navigate(link, { replace: false });
-          //window.parent.location.path=link;
-          window.top?.location.replace(link);
-      }}  
-       style={{ height: '1000px' }}
-   
-        resourceIdAccessor="resourceid"
-        resourceTitleAccessor="resourcetitle"
-       
-        
-        views={{ day: true, week: true, work_week:true }}
-
-        localizer={localizer}
-        events={events}
-         defaultView="day"
-        min={moment("2024-06-24T07:00:00").toDate()}
-        max={moment("2024-06-28T18:00:00").toDate()}
-        resources={resourceMap}
- 
-        date={date}
-
-   
-        onNavigate={dte => {
-          updateDate(dte);
-          
-        }}
-          eventPropGetter={(events) => {
-            const backgroundColor = events.colorEvento ? events.colorEvento : 'blue';
-            const color = events.color ? events.color : 'blue';
-            return { style: { backgroundColor ,color} }
-          }}
-      />
-    </div>
-*/
