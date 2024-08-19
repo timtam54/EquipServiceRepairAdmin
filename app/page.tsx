@@ -72,7 +72,7 @@ export default  function  Page()
   const [engineerID,setEngineerID] = useState(EngID);
   const searchParams = useSearchParams();
   const spd=searchParams.get("dte");
-  const brobj=searchParams.get("branchid")??"0";
+  const brobj=searchParams.get("branchid")??"2";
   //const [branchid,setBranchid]=useState(parseInt(brobj));
   const startdate = (spd==null)?new Date():new Date(spd!.toString());
   const [date,setDate]=useState(startdate);
