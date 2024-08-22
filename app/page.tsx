@@ -18,7 +18,8 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Button from '@mui/material/Button';
 import MapIcon from '@mui/icons-material/Map';
 import GridOnIcon from '@mui/icons-material/GridOn';
-
+import CustomerLocationSearch from '@/components/customerLocationSearch'
+import SearchIcon from '@mui/icons-material/Search';
 const locales = {
   'en-US': enUS,
 }
@@ -51,8 +52,6 @@ interface eventObject{
   colorEvento:string;
   color:string;
 }
-
-
 interface ResourceRow{
   resourceid:string;
   resourcetitle:string;
@@ -242,6 +241,7 @@ resourcetitle:string;*/
       running=false;
     }
 
+    
     const [center,setCenter] = useState<latlon>();
         const [locations,setLocations] = useState<latlon[]>([]); 
         const SetLocsLatLon=(jbs:techsched[])=>
@@ -292,6 +292,7 @@ resourcetitle:string;*/
 }
 const [grid,setGrid]=useState(true);
 const [loading,setLoading] = useState(true);
+const [isModalOpen, setIsModalOpen] = useState(false);
 
 return ( loading ? 
 
@@ -310,10 +311,15 @@ return ( loading ?
     </div>
     :
       <>
+     {isModalOpen && <CustomerLocationSearch
+        closeModal={()=>setIsModalOpen(false)}
+      />}
         {grid && <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
           <div>
             <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
+              <Button style={{backgroundColor:'white',color:'#0690B1'}} variant="outlined"onClick={(e)=>{e.preventDefault();setGrid(false);setIsModalOpen(true);}}><SearchIcon/>Search Customer Location</Button>
+     
               <Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>
               <b>Mon</b>{FormatDate(Mon)}
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
