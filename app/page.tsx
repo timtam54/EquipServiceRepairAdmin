@@ -312,7 +312,7 @@ return ( loading ?
     :
       <>
      {isModalOpen && <CustomerLocationSearch
-        closeModal={()=>setIsModalOpen(false)}
+        closeModal={()=>{setIsModalOpen(false);setGrid(true);}}
       />}
         {grid && <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
           <div>
