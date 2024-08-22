@@ -50,18 +50,23 @@ export default function CustomerLocationSearch({closeModal}:Props)
     const [showModal, setShowModal] = useState(false);
     const [data, setData] = useState<Job[]>([]);
     useEffect(() => {
-        fetchData('~')
+      fetchAllData();
     }, []);
-
+    const fetchAllData=async()=>{
+      setLoading(true);
+      await fetchData('~')
+      setLoading(false)
+    }
     const fetchData=async(search:string)=>
-    {setLoading(true);
+    {
+      
+      
       fetch('https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/CustomerDeptLocation/'+search+'/2')
-      //fetch('https://diapi.icyforest-7eae763b.australiaeast.azurecontainerapps.io/api/CustomerDeptLocation/'+search+'/2')
-            .then(response => response.json())
+             .then(response => response.json())
             .then(data => setLocations(data))
-            .then(data=>setLoading(false))
+          //  .then(())=>setLoading(false))
             .catch(error => console.error(error));
-           // setLoading(false);
+  
     }
     const [loc,setLoc]=useState('');
     
@@ -227,6 +232,12 @@ export default function CustomerLocationSearch({closeModal}:Props)
         width: '100%',
         height: '600px'
       };
+      const searchAddress=async (e:any)=>
+      { setSearch(e.target.value);
+        await fetchData(e.target.value);
+       
+        
+      }
     return ( loading ? 
 
       <div className="relative h-16">
@@ -247,9 +258,10 @@ export default function CustomerLocationSearch({closeModal}:Props)
         <div className="modal" style={{backgroundColor:'#0690B1',color:'white',width:'1100px'}} >
           <div style={{display:'flex'}}>
       <h1 style={{fontSize:'24px',fontWeight:'bold'}}>Customer Location</h1>
-      <Button type="submit" style={{color:'white',borderColor:'white'}} variant="outlined" onClick={(e)=>{e.preventDefault();closeModal()}}>Close</Button>
-      {loc==''?<input type="text" placeholder="Search..." style={{color:'black'}} value={search} onChange={(e)=>{setSearch(e.target.value);fetchData(e.target.value);}} />:  <><h1>Nearest Jobs in next 2 months</h1><Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>  <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
+     
+      {loc==''? <input type="text" style={{color:'black'}} value={search} onChange={searchAddress} ></input>:  <><h1>Nearest Jobs in next 2 months</h1><Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>  <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
       </>}
+      <Button type="submit" style={{color:'white',borderColor:'white'}} variant="outlined" onClick={(e)=>{e.preventDefault();closeModal()}}>Close</Button>
       </div>
       {loc==''?<DataTable columns={columns}
                 customStyles={customStyles}
