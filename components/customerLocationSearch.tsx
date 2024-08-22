@@ -255,11 +255,11 @@ export default function CustomerLocationSearch({closeModal}:Props)
         </div>
         :
         <div className="modal-container">
-        <div className="modal" style={{backgroundColor:'#0690B1',color:'white',width:'1100px'}} >
+        <div className="modal" style={{backgroundColor:'#0690B1',color:'white',width:'1200px'}} >
           <div style={{display:'flex'}}>
       <h1 style={{fontSize:'24px',fontWeight:'bold'}}>Customer Location</h1>
      
-      {loc==''? <input type="text" style={{color:'black'}} value={search} onChange={searchAddress} ></input>:  <><h1>Nearest Jobs in next 2 months</h1><Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>  <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
+      {loc==''? <input type="text" style={{color:'black'}} value={search} onChange={searchAddress} ></input>:  <><h1>Nearest Jobs in next 2 months to:</h1><p style={{color:'yellow'}}>{loc}</p><Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>  <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
       </>}
       <Button type="submit" style={{color:'white',borderColor:'white'}} variant="outlined" onClick={(e)=>{e.preventDefault();closeModal()}}>Close</Button>
       </div>
