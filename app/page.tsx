@@ -301,7 +301,6 @@ return ( loading ?
         <Circles
       height="200"
       width="200"
-
       color="navy"
       ariaLabel="circles-loading"
       wrapperStyle={{}}
@@ -319,14 +318,12 @@ return ( loading ?
             <div style={{display:'flex',justifyContent:'space-between',alignItems: 'center'}}>
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();prev();}}><FastRewindIcon style={{fontSize:'36px'}} /></button> </div>
               <Button style={{backgroundColor:'white',color:'#0690B1'}} variant="outlined"onClick={(e)=>{e.preventDefault();setGrid(false);setIsModalOpen(true);}}><SearchIcon/>Search Customer Location</Button>
-     
               <Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>
               <b>Mon</b>{FormatDate(Mon)}
               <div><button style={{color:'red'}} onClick={(e)=>{e.preventDefault();next();}}><FastForwardIcon style={{fontSize:'36px'}}/></button> </div>
               <div></div>
           </div>
-          <Calendar
-          
+          <Calendar     
           toolbar={false}
           selectable={true}
        onSelectSlot={(slot:any) => {

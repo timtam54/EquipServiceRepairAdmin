@@ -240,7 +240,7 @@ export default function CustomerLocationSearch({closeModal}:Props)
       }
     return ( loading ? 
 
-      <div className="relative h-16">
+      <div className="modal-top">
          <div className="absolute p-4 text-center transform -translate-x-1/2 border left-1/2">
             <Circles
           height="200"
@@ -259,7 +259,7 @@ export default function CustomerLocationSearch({closeModal}:Props)
           <div style={{display:'flex'}}>
       <h1 style={{fontSize:'24px',fontWeight:'bold'}}>Customer Location</h1>
      
-      {loc==''? <input type="text" style={{color:'black'}} value={search} onChange={searchAddress} ></input>:  <><h1>Nearest Jobs in next 2 months to:</h1><p style={{color:'yellow'}}>{loc}</p><Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>  <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
+      {loc==''? <input placeholder='search' type="text" style={{color:'black'}} value={search} onChange={searchAddress} ></input>:  <><h1>Nearest Jobs in next 2 months to:</h1><p style={{color:'yellow'}}>{loc}</p><Button style={{backgroundColor:grid?'white':'yellow',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(false)}}><MapIcon/>Map</Button>  <Button style={{backgroundColor:grid?'yellow':'white',color:'#0690B1'}} variant="outlined" onClick={(e)=>{e.preventDefault();setGrid(true)}}><GridOnIcon/>Diary</Button>
       </>}
       <Button type="submit" style={{color:'white',borderColor:'white'}} variant="outlined" onClick={(e)=>{e.preventDefault();closeModal()}}>Close</Button>
       </div>
