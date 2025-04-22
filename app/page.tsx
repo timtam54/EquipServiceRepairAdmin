@@ -1,12 +1,12 @@
 'use client'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar'
-import format from 'date-fns/format'
-import parse from 'date-fns/parse'
+import { format } from 'date-fns'
+import { parse } from 'date-fns'
 import { useSearchParams } from "next/navigation";
-import startOfWeek from 'date-fns/startOfWeek'
-import getDay from 'date-fns/getDay'
-import enUS from 'date-fns/locale/en-AU'
+import { startOfWeek } from 'date-fns'
+import { getDay } from 'date-fns'
+import { enAU as enUS } from 'date-fns/locale'
 import { Circles } from 'react-loader-spinner'
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import React, { ChangeEvent, useCallback, useState  }  from 'react';
