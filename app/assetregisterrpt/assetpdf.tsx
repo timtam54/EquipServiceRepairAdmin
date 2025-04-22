@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   logo: {
-    width: 200,
+    width: 300,
   },
   contactInfo: {
     fontSize: 9,
@@ -304,7 +304,7 @@ export default function AssetRegisterPDFViewer({customercode,customername,onclos
             {/* Logo on the left */}
             <div className="mb-4 md:mb-0">
               <a href="/">
-                <img src="/logo.png" alt="Dental Installations Logo" width={200} height={60} className="h-auto" />
+                <img src="/logo.png" alt="Dental Installations Logo" width={300} height={90} className="h-auto" />
               </a>
             </div>
 
@@ -312,28 +312,28 @@ export default function AssetRegisterPDFViewer({customercode,customername,onclos
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-2 text-sm">
               <div>
                 <div className="font-bold text-gray-800">Phone:</div>
-                <a href="tel:1300305267" className="text-amber-700 hover:underline">
+                <a href="tel:1300305267" className="text-black hover:underline">
                   1300 305 267
                 </a>
 
                 <div className="font-bold text-gray-800 mt-2">Email:</div>
-                <a href="mailto:sales@dentalinstallations.com.au" className="text-amber-700 hover:underline">
+                <a href="mailto:sales@dentalinstallations.com.au" className="text-black hover:underline">
                   sales@dentalinstallations.com.au
                 </a>
 
-                <div className="font-bold text-gray-800 mt-2">Fax:</div>
-                <div className="text-amber-700">02 9522 5272</div>
+               
+                
               </div>
 
               <div>
-                <div className="font-bold text-gray-800">Warehouse & Showroom:</div>
+                <div className="font-bold text-black">Warehouse & Showroom:</div>
                 <div>27/205 Port Hacking Road</div>
-                <div className="text-amber-700">MIRANDA NSW 2228</div>
+                <div className="text-black">MIRANDA NSW 2228</div>
 
-                <div className="font-bold text-gray-800 mt-2">Postal Address:</div>
+                <div className="font-bold text-black mt-2">Postal Address:</div>
                 <div>Dental Installations (Aust) Pty Ltd</div>
                 <div>PO Box 2435</div>
-                <div className="text-amber-700">TAREN POINT NSW 2229</div>
+                <div className="text-black">TAREN POINT NSW 2229</div>
               </div>
             </div>
           </div>
